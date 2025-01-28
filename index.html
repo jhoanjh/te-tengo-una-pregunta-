@@ -8,9 +8,9 @@
       body {
         font-family: Arial, sans-serif;
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         height: 100vh;
         margin: 0;
         background-color: #ffe6f2;
@@ -20,13 +20,13 @@
       h1 {
         font-size: 2.5rem;
         color: #ff66b2;
+        margin-bottom: 40px;
       }
 
       .button-container {
         display: flex;
+        justify-content: center;
         gap: 20px;
-        margin-top: 20px;
-        position: relative;
       }
 
       button {
@@ -51,7 +51,7 @@
       .no-btn {
         background-color: #ff6961;
         color: white;
-        position: absolute;
+        position: relative;
         transition: transform 0.2s;
       }
 
@@ -70,72 +70,33 @@
 
     <script>
       const question = document.querySelector('h1');
-      const buttonContainer = document.getElementById('button-container');
       const noBtn = document.getElementById('no-btn');
       const yesBtn = document.getElementById('yes-btn');
 
-      let noCounter = 0; // Contador para llevar el registro de los "No"
-
-      // Función para mover el botón "No" a una nueva posición
+      // Función para mover el botón "No" a una nueva posición cuando el mouse se acerque
       function moveNoButton() {
-        const randomX = Math.floor(Math.random() * window.innerWidth - noBtn.offsetWidth); // Mover en el eje X
-        const randomY = Math.floor(Math.random() * window.innerHeight - noBtn.offsetHeight); // Mover en el eje Y
+        const randomX = Math.floor(Math.random() * (window.innerWidth - noBtn.offsetWidth)); // Mover en el eje X
+        const randomY = Math.floor(Math.random() * (window.innerHeight - noBtn.offsetHeight)); // Mover en el eje Y
         noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
       }
 
-      // Para dispositivos móviles y escritorio
-      const moveButtonEvent = 'ontouchstart' in window ? 'touchstart' : 'mouseover';
-
-      // Mueve el botón cuando el usuario toque el botón "No"
-      noBtn.addEventListener(moveButtonEvent, () => {
-        moveNoButton(); // Mueve el botón "No" cuando el usuario lo toca o pasa el mouse
+      // Detecta si el mouse se acerca al botón "No"
+      noBtn.addEventListener('mouseenter', () => {
+        moveNoButton(); // Mueve el botón "No" cuando el mouse se acerca a él
       });
 
-      // Cuando el mouse sale del botón, el botón "No" permanece en su nueva posición
-      noBtn.addEventListener('mouseout', () => {
-        // El botón se queda en la nueva posición hasta que se vuelva a apuntar
+      // El botón "No" será imposible de presionar, ya que se mueve constantemente
+      noBtn.addEventListener('click', (event) => {
+        event.preventDefault(); // Evita que el botón sea presionado
+        moveNoButton(); // Si el usuario intenta hacer clic, el botón se mueve
       });
-
-      function createButtons() {
-        // Vuelve a crear los botones "Sí" y "No"
-        buttonContainer.innerHTML = `
-          <button class="yes-btn" id="yes-btn">Sí</button>
-          <button class="no-btn" id="no-btn">No</button>
-        `;
-
-        // Asigna los eventos nuevamente
-        document.getElementById('yes-btn').addEventListener('click', handleYes);
-        document.getElementById('no-btn').addEventListener('click', handleNo);
-      }
 
       function handleYes() {
         question.innerText = "¡Sabía que dirías que sí! 😍";
-        buttonContainer.style.display = 'none';
+        noBtn.style.display = 'none'; // Oculta el botón "No" cuando se dice que "Sí"
       }
 
-      function handleNo() {
-        noCounter++; // Aumenta el contador de "No"
-        
-        if (noCounter === 1) {
-          question.innerText = "¿Estás segura? 🤔";
-        } else if (noCounter === 2) {
-          question.innerText = "¿Segura de verdad? 😅";
-        } else if (noCounter === 3) {
-          question.innerText = "¿Por qué dices que no? ¡Vas a decir que sí! 😍";
-        }
-
-        // Si ya se han dado 3 respuestas "No", obliga al usuario a decir "Sí"
-        if (noCounter >= 3) {
-          question.innerText = "¡Es hora de decir que sí! 😘";
-          createButtons();
-        } else {
-          createButtons();
-        }
-      }
-
-      // Asigna eventos iniciales
-      document.getElementById('yes-btn').addEventListener('click', handleYes);
-      document.getElementById('no-btn').addEventListener('click', handleNo);
+      yesBtn.addEventListener('click', handleYes);
     </script>
   </body>
 </html>
